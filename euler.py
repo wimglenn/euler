@@ -86,11 +86,9 @@ def pentagonals():
 def fib_r(n, memo={0: 0, 1: 1}):
   """recursive fibonacci numbers generation with memoisation
 
-  >>> fib_r(0)
-  0
   >>> [fib_r(n) for n in range(10)]
   [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
-  >>> fib_r(100)
+  >>> print(fib_r(100))
   354224848179261915075"""
   if n not in memo:
     memo[n] = fib(n - 1) + fib(n - 2)
@@ -110,11 +108,9 @@ def fib_gen():
 def fib_i(n):
   """iterative fibonacci numbers
 
-  >>> fib_i(0)
-  0
   >>> [fib_i(n) for n in range(10)]
   [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
-  >>> fib_i(100)
+  >>> print(fib_i(100))
   354224848179261915075"""
   return next(it.islice(fib_gen(), n, n + 1))
 
