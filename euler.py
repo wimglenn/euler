@@ -24,11 +24,17 @@ def squares():
 
 
 def isqrt(n):
-  """craptastic integer square root.  fails for large inputs"""
-  i = int(math.sqrt(n) + 0.5)
-  if i**2 == n:
-    return i
-  raise ValueError('input was not a perfect square')
+  """integer square root.  uses newton's method"""
+  if n == 0:
+    return 0
+  x = n
+  y = (x + n // x) // 2
+  while y < x:
+    x = y
+    y = (x + n // x) // 2
+  if x**2 != n:
+    raise ValueError('input was not a perfect square')
+  return x
 
 
 def multiplicative_order(a, n):
@@ -76,10 +82,12 @@ def triangles():
 
 
 def pentagonal(n):
+  """returns the nth pentagonal number"""
   return n * (3 * n - 1) // 2
 
 
 def pentagonals():
+  """generator yielding consecutive pentagonal numbers"""
   return (pentagonal(n) for n in it.count(1))
 
 
@@ -164,6 +172,26 @@ class SetOfPrimes(object):
     return self.memo[n]
 
 Primes = SetOfPrimes()
+
+
+def is_pentagonal(n):
+  try:
+    x = isqrt(24 * n + 1)
+  except ValueError:
+    return False
+  return (x + 1) % 6 == 0
+
+
+class SetOfPentagonals(object):
+  """Set-like object of pentagonal numbers"""
+  def __init__(self):
+    self.memo = {}
+  def __contains__(self, n):
+    if n not in self.memo:
+      self.memo[n] = is_pentagonal(n)
+    return self.memo[n]
+
+Pentagonals = SetOfPentagonals()
 
 
 def factorise(n):
@@ -1099,10 +1127,12 @@ def p044():
   It can be seen that P4 + P7 = 22 + 70 = 92 = P8. However, their difference, 70 - 22 = 48, is not pentagonal.
 
   Find the pair of pentagonal numbers, Pj and Pk, for which their sum and difference are pentagonal and D = |Pk - Pj| is minimised; what is the value of D?"""
-  pass
-
-
-
+  for n in it.count(1):
+    pn = pentagonal(n)
+    lower_pentagonals = [pentagonal(i) for i in range(1, n)]
+    for p in lower_pentagonals:
+      if pn - p in Pentagonals and pn + p in Pentagonals:
+        return pn - p
 
 
 if __name__ == '__main__' and 1:
