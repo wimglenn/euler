@@ -38,11 +38,11 @@ def isqrt(n):
 
 
 def multiplicative_order(a, n):
-  """In number theory, given an integer a and a positive integer n with gcd(a,n) = 1, the multiplicative order of a modulo n is the smallest positive integer k with a ** k congruent to 1 (mod n)"""
+  """In number theory, given an integer a and a positive integer n with gcd(a,n) = 1, the multiplicative order of a modulo n is the smallest positive integer k with a**k congruent to 1 (mod n)"""
   if gcd(a, n) != 1:
     raise ValueError('Input numbers should be co-prime')
   for k in it.count(1):
-    if (a ** k) % n == 1:
+    if (a**k) % n == 1:
       return k
 
 
@@ -731,7 +731,7 @@ def p024():
   012   021   102   120   201   210
 
   What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?"""
-  return int(''.join(str(n) for n in next(it.islice(it.permutations(range(10)), 10 ** 6 - 1, 10 ** 6))))
+  return int(''.join(str(n) for n in next(it.islice(it.permutations(range(10)), 10**6 - 1, 10**6))))
 
 
 def p025():
@@ -1155,12 +1155,12 @@ def p045():
 def p046():
   """It was proposed by Christian Goldbach that every odd composite number can be written as the sum of a prime and twice a square.
 
-   9 =  7 + 2 * 1**2
-  15 =  7 + 2 * 2**2
-  21 =  3 + 2 * 3**2
-  25 =  7 + 2 * 3**2
-  27 = 19 + 2 * 2**2
-  33 = 31 + 2 * 1**2
+   9 =  7 + 2 * 1^2
+  15 =  7 + 2 * 2^2
+  21 =  3 + 2 * 3^2
+  25 =  7 + 2 * 3^2
+  27 = 19 + 2 * 2^2
+  33 = 31 + 2 * 1^2
 
   It turns out that the conjecture was false.
 
@@ -1181,6 +1181,33 @@ def p046():
       return int(candidates.argmax())
     else:
       bound *= 2
+
+
+def p047():
+  """The first two consecutive numbers to have two distinct prime factors are:
+
+  14 = 2 × 7
+  15 = 3 × 5
+
+  The first three consecutive numbers to have three distinct prime factors are:
+
+  644 = 2^2 × 7 × 23
+  645 = 3 × 5 × 43
+  646 = 2 × 17 × 19.
+
+  Find the first four consecutive integers to have four distinct prime factors. What is the first of these numbers?"""
+  n = 4
+  for i in it.count():
+    if all(len(set(factorise(i + k))) == n for k in range(n)):
+      return i
+
+
+def p048():
+  """The series, 1^1 + 2^2 + 3^3 + ... + 10^10 = 10405071317.
+
+  Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000."""
+  return int(str(sum(i**i for i in range(1, 1001)))[-10:])
+
 
 
 
