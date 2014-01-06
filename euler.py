@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
-# http://projecteuler.net/
+"""
+http://projecteuler.net/
+"""
+# pylint: disable=line-too-long,superfluous-parens,invalid-name
 
 import os
 import ast
 import math
 import time
 import string
-import timeit
 import collections
 import itertools as it
 import operator as op
@@ -276,14 +278,14 @@ def p002():
 
     By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms."""
 
-    def fib_gen():
+    def fib_gen2():
         i = 0
         while fib(i) < 4 * 10 ** 6:
             if fib(i) % 2 == 0:
                 yield fib(i)
             i += 1
 
-    return sum(fib_gen())
+    return sum(fib_gen2())
 
 
 def p003():
@@ -839,7 +841,7 @@ def p028():
         yield n
         step = 2
         while True:
-            for x in range(4):
+            for _ in range(4):
                 n += step
                 yield n
             step += 2
@@ -1301,13 +1303,13 @@ if __name__ == '__main__' and 1:
     parser.add_argument('--all', action='store_true')
     args = parser.parse_args()
 
-    for i in range(1, 401):
-        problem = locals().get('p{:03d}'.format(i))
-        next_problem = locals().get('p{:03d}'.format(i + 1))
+    for problem_number in range(1, 401):
+        problem = locals().get('p{:03d}'.format(problem_number))
+        next_problem = locals().get('p{:03d}'.format(problem_number + 1))
         if problem is not None and (next_problem is None or args.all):
             t0 = time.time()
-            result = problem()
-            if result is not None and type(result) != int:
-                print('result {} is instance {}, expected int'.format(i, type(result)))
+            answer = problem()
+            if answer is not None and type(answer) != int:
+                print('result {} is instance {}, expected int'.format(problem_number, type(answer)))
             t1 = time.time()
-            print('problem {:3d}: {} ({:.02f} s)'.format(i, result, t1 - t0))
+            print('problem {:3d}: {} ({:.02f} s)'.format(problem_number, answer, t1 - t0))
