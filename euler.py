@@ -21,7 +21,7 @@ from functools import reduce
 
 def squares():
     """generator yielding 1, 4, 9, 16..."""
-    return (n*n for n in it.count(1))
+    return (n * n for n in it.count(1))
 
 
 def isqrt(n):
@@ -33,7 +33,7 @@ def isqrt(n):
     while y < x:
         x = y
         y = (x + n // x) // 2
-    if x**2 != n:
+    if x ** 2 != n:
         raise ValueError('input was not a perfect square')
     return x
 
@@ -43,7 +43,7 @@ def multiplicative_order(a, n):
     if gcd(a, n) != 1:
         raise ValueError('Input numbers should be co-prime')
     for k in it.count(1):
-        if (a**k) % n == 1:
+        if (a ** k) % n == 1:
             return k
 
 
@@ -156,18 +156,21 @@ def primes(n):
         return []
     r = [True for x in range(n)]
     r[0] = r[1] = False
-    r[4::2] = [False]*len(r[4::2])
+    r[4::2] = [False] * len(r[4::2])
     for i, x in enumerate(r[:int(1 + math.sqrt(n))]):
         if x:
-            r[3*i::2*i] = [False]*len(r[3*i::2*i])
+            r[3 * i::2 * i] = [False] * len(r[3 * i::2 * i])
     return [i for i, x in enumerate(r) if x]
 
 
 class SetOfThings(object):
+
     """A set-like abstraction which hides a callable deterministic test"""
+
     def __init__(self, test_callable):
         self.test_callable = test_callable
         self.memo = {}
+
     def __contains__(self, n):
         if n not in self.memo:
             self.memo[n] = self.test_callable(n)
@@ -275,7 +278,7 @@ def p002():
 
     def fib_gen():
         i = 0
-        while fib(i) < 4 * 10**6:
+        while fib(i) < 4 * 10 ** 6:
             if fib(i) % 2 == 0:
                 yield fib(i)
             i += 1
@@ -294,7 +297,7 @@ def p004():
     """A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91  99.
 
     Find the largest palindrome made from the product of two 3-digit numbers."""
-    return max(x*y for x,y in it.combinations(range(100,1000), 2) if str(x*y) == str(x*y)[::-1])
+    return max(x * y for x, y in it.combinations(range(100, 1000), 2) if str(x * y) == str(x * y)[::-1])
 
 
 def p005():
@@ -317,8 +320,8 @@ def p006():
     s = (100 * (100 + 1)) // 2
     brute_force_s = sum(range(101))
     assert s == brute_force_s
-    result = sum(x*(s-x) for x in range(101))
-    brute_force_result = sum(range(101))**2 - sum(x**2 for x in range(101))
+    result = sum(x * (s - x) for x in range(101))
+    brute_force_result = sum(range(101)) ** 2 - sum(x ** 2 for x in range(101))
     assert result == brute_force_result
     return result
 
@@ -361,7 +364,7 @@ def p008():
     n_str = ''.join(x.strip() for x in p008.__doc__.splitlines()[2:])
     assert len(n_str) == 1000
     n_list = [int(x) for x in n_str]
-    return max(reduce(op.mul, n_list[i:i+5]) for i in range(1000))
+    return max(reduce(op.mul, n_list[i:i + 5]) for i in range(1000))
 
 
 def p009():
@@ -374,7 +377,7 @@ def p009():
     Find the product abc."""
     for a, b in it.combinations_with_replacement(range(1, 501), 2):
         c = 1000 - a - b
-        if a**2 + b**2 == c**2:
+        if a ** 2 + b ** 2 == c ** 2:
             break
     return a * b * c
 
@@ -383,7 +386,7 @@ def p010():
     """The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
 
     Find the sum of all the primes below two million."""
-    return sum(primes(2 * 10**6))
+    return sum(primes(2 * 10 ** 6))
 
 
 def p011():
@@ -416,10 +419,10 @@ def p011():
     a = np.array([[int(x) for x in row.split()] for row in p011.__doc__.splitlines()[2:-4]])
     assert a.shape == (20, 20)
     n = 4
-    verticals     = reduce(op.mul, (a[i:i+a.shape[0]-n+1, :                 ] for i in range(n)))
-    horizontals   = reduce(op.mul, (a[:                 , i:i+a.shape[1]-n+1] for i in range(n)))
-    diagonals     = reduce(op.mul, (a[i:i+a.shape[0]-n+1, i:i+a.shape[1]-n+1] for i in range(n)))
-    antidiagonals = reduce(op.mul, (a[i:i+a.shape[0]-n+1, n-i-1:a.shape[1]-i] for i in range(n)))
+    verticals = reduce(op.mul, (a[i:i + a.shape[0] - n + 1, :] for i in range(n)))
+    horizontals = reduce(op.mul, (a[:, i:i + a.shape[1] - n + 1] for i in range(n)))
+    diagonals = reduce(op.mul, (a[i:i + a.shape[0] - n + 1, i:i + a.shape[1] - n + 1] for i in range(n)))
+    antidiagonals = reduce(op.mul, (a[i:i + a.shape[0] - n + 1, n - i - 1:a.shape[1] - i] for i in range(n)))
     return int(max(verticals.max(), horizontals.max(), diagonals.max(), antidiagonals.max()))
 
 
@@ -566,7 +569,7 @@ def p014():
     Which starting number, under one million, produces the longest chain?
 
     NOTE: Once the chain starts the terms are allowed to go above one million."""
-    return max(range(1, 10**6), key=collatz_length)
+    return max(range(1, 10 ** 6), key=collatz_length)
 
 
 def p015():
@@ -575,19 +578,19 @@ def p015():
     How many routes are there through a 20x20 grid?"""
     a = np.zeros((21, 21), dtype=int)
     a[0] = 1
-    a[:,0] = 1
+    a[:, 0] = 1
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
-            if a[i,j] == 0:
-                a[i,j] = a[i-1,j] + a[i,j-1]
-    return int(a[-1,-1])
+            if a[i, j] == 0:
+                a[i, j] = a[i - 1, j] + a[i, j - 1]
+    return int(a[-1, -1])
 
 
 def p016():
     """2^15 = 32768 and the sum of its digits is 3 + 2 + 7 + 6 + 8 = 26.
 
     What is the sum of the digits of the number 2^1000?"""
-    return sum(int(x) for x in str(2**1000))
+    return sum(int(x) for x in str(2 ** 1000))
 
 
 def p017():
@@ -645,7 +648,7 @@ def p018():
 
     NOTE: As there are only 16384 routes, it is possible to solve this problem by trying every route. However, Problem 67, is the same challenge with a triangle containing one-hundred rows; it cannot be solved by brute force, and requires a clever method! ;o)"""
     d = [[int(n) for n in x.split()] for x in p018.__doc__.splitlines()[11:-2]]
-    s = [[0]*len(r) for r in d]
+    s = [[0] * len(r) for r in d]
     s[-1][:] = d[-1][:]
     r = len(d) - 2
     while r >= 0:
@@ -732,7 +735,7 @@ def p024():
     012   021   102   120   201   210
 
     What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?"""
-    return int(''.join(str(n) for n in next(it.islice(it.permutations(range(10)), 10**6 - 1, 10**6))))
+    return int(''.join(str(n) for n in next(it.islice(it.permutations(range(10)), 10 ** 6 - 1, 10 ** 6))))
 
 
 def p025():
@@ -758,7 +761,7 @@ def p025():
     What is the first term in the Fibonacci sequence to contain 1000 digits?"""
     fg = fib_gen()
     for i in it.count():
-        if next(fg) >= 10**999:
+        if next(fg) >= 10 ** 999:
             break
     return i
 
@@ -802,8 +805,9 @@ def p027():
     Find the product of the coefficients, a and b, for the quadratic expression that produces the maximum number of primes for consecutive values of n, starting with n = 0."""
     max_count = 40
     max_ab = 1 * 41
+
     def f(n, a, b):
-        return is_prime(n**2 + a * n + b)
+        return is_prime(n ** 2 + a * n + b)
     # b must be prime (consider n = 0)
     for b in primes(1000):
         # a must be odd (consider n = 1)
@@ -855,7 +859,7 @@ def p029():
     4, 8, 9, 16, 25, 27, 32, 64, 81, 125, 243, 256, 625, 1024, 3125
 
     How many distinct terms are in the sequence generated by ab for 2 <= a <= 100 and 2 <= b <= 100?"""
-    return len({a**b for a in range(2, 101) for b in range(2, 101)})
+    return len({a ** b for a in range(2, 101) for b in range(2, 101)})
 
 
 def p030():
@@ -869,7 +873,7 @@ def p030():
     The sum of these numbers is 1634 + 8208 + 9474 = 19316.
 
     Find the sum of all the numbers that can be written as the sum of fifth powers of their digits."""
-    return sum(i for i in range(10, 9**5 * 6) if i == sum(int(d)**5 for d in str(i)))
+    return sum(i for i in range(10, 9 ** 5 * 6) if i == sum(int(d) ** 5 for d in str(i)))
 
 
 def p031():
@@ -931,7 +935,7 @@ def p033():
                 try:
                     numerator_, denominator_ = int(str(numerator).strip(d)), int(str(denominator).strip(d))
                 except ValueError:
-                    #int('') called due to double digit coincidence
+                    # int('') called due to double digit coincidence
                     continue
                 if numerator * denominator_ == numerator_ * denominator:
                     nontrivial_curious_fractions.append((numerator, denominator))
@@ -1021,12 +1025,12 @@ def p039():
     {20,48,52}, {24,45,51}, {30,40,50}
 
     For which value of p <= 1000, is the number of solutions maximised?"""
-    squares = {n**2 for n in range(1, 501)}
+    squares = {n ** 2 for n in range(1, 501)}
     counter = collections.Counter()
     for a in range(1, 501):
         for b in range(a, 501):
-            if a**2 + b**2 in squares:
-                c = isqrt(a**2 + b**2)
+            if a ** 2 + b ** 2 in squares:
+                c = isqrt(a ** 2 + b ** 2)
                 p = a + b + c
                 if p <= 1000:
                     counter[p] += 1
@@ -1047,7 +1051,7 @@ def p040():
     for i in it.count(1):
         s += str(i)
         if len(s) > 1000000:
-            return reduce(op.mul, [int(s[10**d]) for d in range(7)], 1)
+            return reduce(op.mul, [int(s[10 ** d]) for d in range(7)], 1)
 
 
 def p041():
@@ -1102,21 +1106,21 @@ def p043():
         d7 = (n % 100) // 10
         d8 = n % 10
         for d9 in set(range(10)) - {d6, d7, d8}:
-            if (100*d7 + 10*d8 + d9) % 13 == 0:
+            if (100 * d7 + 10 * d8 + d9) % 13 == 0:
                 for d10 in set(range(10)) - {d6, d7, d8, d9}:
-                    if (100*d8 + 10*d9 + d10) % 17 == 0:
+                    if (100 * d8 + 10 * d9 + d10) % 17 == 0:
                         for d5 in set(range(10)) - {d6, d7, d8, d9, d10}:
-                            if (100*d5 + 10*d6 + d7) % 7 == 0:
+                            if (100 * d5 + 10 * d6 + d7) % 7 == 0:
                                 # d2d3d4 is even and hence d4 must be in '02468'
                                 for d4 in set(range(0, 10, 2)) - {d5, d6, d7, d8, d9, d10}:
                                     for d3 in set(range(10)) - {d4, d5, d6, d7, d8, d9, d10}:
                                         # d345, and therefore also d3 + d4 + d5, must be divisible by 3
                                         if (d3 + d4 + d5) % 3 == 0:
                                             d1, d2 = set(range(10)) - {d3, d4, d5, d6, d7, d8, d9, d10}
-                                            hit = sum(10**i * d for i, d in enumerate([d10, d9, d8, d7, d6, d5, d4, d3, d2, d1]))
+                                            hit = sum(10 ** i * d for i, d in enumerate([d10, d9, d8, d7, d6, d5, d4, d3, d2, d1]))
                                             hits |= {hit}
                                             d2, d1 = d1, d2
-                                            hit = sum(10**i * d for i, d in enumerate([d10, d9, d8, d7, d6, d5, d4, d3, d2, d1]))
+                                            hit = sum(10 ** i * d for i, d in enumerate([d10, d9, d8, d7, d6, d5, d4, d3, d2, d1]))
                                             hits |= {hit}
     assert all(unique_digits(d) for d in hits)
     return sum(hits)
@@ -1207,7 +1211,7 @@ def p048():
     """The series, 1^1 + 2^2 + 3^3 + ... + 10^10 = 10405071317.
 
     Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000."""
-    return int(str(sum(i**i for i in range(1, 1001)))[-10:])
+    return int(str(sum(i ** i for i in range(1, 1001)))[-10:])
 
 
 def p049():
@@ -1223,7 +1227,7 @@ def p049():
         if p1 in primes4 and p2 in primes4:
             if sorted(str(p1)) == sorted(str(p2)) == sorted(str(p)):
                 if p != 1487:
-                    return p2 + p1 * 10**4 + p * 10**8
+                    return p2 + p1 * 10 ** 4 + p * 10 ** 8
 
 
 def p050():
@@ -1235,16 +1239,16 @@ def p050():
     The longest sum of consecutive primes below one-thousand that adds to a prime, contains 21 terms, and is equal to 953.
 
     Which prime, below one-million, can be written as the sum of the most consecutive primes?"""
-    p = primes(10**6)
+    p = primes(10 ** 6)
     set_p = set(p)
     # first find an upper bound on n
     n = 1
-    while sum(p[:n]) < 10**6:
+    while sum(p[:n]) < 10 ** 6:
         n += 1
     while True:
         for i in it.count():
-            sum_p = sum(p[i:n+i])
-            if sum_p < 10**6:
+            sum_p = sum(p[i:n + i])
+            if sum_p < 10 ** 6:
                 if sum_p in set_p:
                     return sum_p
             else:
@@ -1267,7 +1271,7 @@ def p051():
         for d in string.digits[1 if 0 in positions else 0:]:
             yield int(''.join(template).replace('?', d))
 
-    some_primes = primes(10**6)  # primes below 10 million
+    some_primes = primes(10 ** 6)  # primes below 10 million
     set_primes = set(some_primes)
     for p in some_primes:
         n = len(str(p))
@@ -1286,7 +1290,6 @@ def p052():
         strs = [str(i * n) for i in range(1, 7)]
         if len(set([''.join(sorted(s)) for s in strs])) == 1:
             return n
-
 
 
 if __name__ == '__main__' and 1:
