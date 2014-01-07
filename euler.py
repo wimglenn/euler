@@ -28,8 +28,10 @@ if sys.version_info.major == 2:
 def my_timeit(func, *args, **kwargs):
     """Uses timeit to wrap a function and return execution time along with the result"""
     output_container = []
+
     def wrapper():
-      output_container.append(func(*args, **kwargs))
+        output_container.append(func(*args, **kwargs))
+
     timer = Timer(wrapper)
     delta = timer.timeit(1)
     return delta, output_container.pop()
@@ -1308,7 +1310,6 @@ def p052():
             return n
 
 
-
 if __name__ == '__main__' and 1:
 
     import doctest
@@ -1347,5 +1348,5 @@ if __name__ == '__main__' and 1:
         print(' problem {:3d}: {:16d} ({:.02f} s)'.format(problem_number, answer, delta))
 
     if len(problems) > 1:
-        print('-'*40)
+        print('-' * 40)
         print(' total time : {:.02f} s'.format(total_time))
