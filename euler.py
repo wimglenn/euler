@@ -1320,3 +1320,8 @@ if __name__ == '__main__' and 1:
             if answer is not None and type(answer) != int:
                 print('result {} is instance {}, expected int'.format(problem_number, type(answer)))
             print('problem {:3d}: {} ({:.02f} s)'.format(problem_number, answer, delta))
+
+# TODO: cleanup this __main__ part, scrape all avail problem names
+#       can time a function call in 1-line ?
+
+
