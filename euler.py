@@ -9,7 +9,6 @@ import os
 import ast
 import sys
 import math
-import time
 import string
 import collections
 import itertools as it
@@ -18,12 +17,22 @@ import numpy as np
 import datetime as dt
 import argparse as ap
 from functools import reduce
+from timeit import Timer
 
-#--- util ---------------------------------------------------------------------
-
+#--- util -------------------------------------------------------------------------------------------------------------
 
 if sys.version_info.major == 2:
     range = xrange
+
+
+def my_timeit(func, *args, **kwargs):
+    """Uses timeit to wrap a function and return execution time along with the result"""
+    output_container = []
+    def wrapper():
+      output_container.append(func(*args, **kwargs))
+    timer = Timer(wrapper)
+    delta = timer.timeit(1)
+    return delta, output_container.pop()
 
 
 def squares():
@@ -1304,12 +1313,6 @@ if __name__ == '__main__' and 1:
 
     import doctest
     doctest.testmod()
-
-    def my_timeit(func, *args, **kwargs):
-        t0 = time.time()
-        result = func(*args, **kwargs)
-        delta = time.time() - t0
-        return delta, result
 
     parser = ap.ArgumentParser("Wim's project euler progress")
     parser.add_argument('--all', action='store_true')
