@@ -617,7 +617,7 @@ def p017():
         rest = n % 100
         d[n] = d[hundreds] + ' hundred' + (' and {}'.format(d[rest]) if rest else '')
     d[1000] = 'one thousand'
-    return len(''.join(iter(d.values())).translate({ord(c): None for c in '- '}))
+    return sum(1 for word in d.values() for c in word if c not in '- ')
 
 
 def p018():
@@ -1301,15 +1301,17 @@ if __name__ == '__main__' and 1:
 
     parser = ap.ArgumentParser("Wim's project euler progress")
     parser.add_argument('--all', action='store_true')
+    parser.add_argument('ids', type=int, nargs='*', default=[])
     args = parser.parse_args()
 
-    for problem_number in range(1, 401):
+    ids = args.ids or range(1, 501)
+    for problem_number in ids:
         problem = locals().get('p{:03d}'.format(problem_number))
         next_problem = locals().get('p{:03d}'.format(problem_number + 1))
-        if problem is not None and (next_problem is None or args.all):
+        if problem is not None and (next_problem is None or args.all or args.ids):
             t0 = time.time()
             answer = problem()
+            dt = time.time() - t0
             if answer is not None and type(answer) != int:
                 print('result {} is instance {}, expected int'.format(problem_number, type(answer)))
-            t1 = time.time()
-            print('problem {:3d}: {} ({:.02f} s)'.format(problem_number, answer, t1 - t0))
+            print('problem {:3d}: {} ({:.02f} s)'.format(problem_number, answer, dt))
