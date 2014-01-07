@@ -1299,29 +1299,50 @@ def p052():
             return n
 
 
+
 if __name__ == '__main__' and 1:
 
     import doctest
     doctest.testmod()
+
+    def my_timeit(func, *args, **kwargs):
+        t0 = time.time()
+        result = func(*args, **kwargs)
+        delta = time.time() - t0
+        return delta, result
 
     parser = ap.ArgumentParser("Wim's project euler progress")
     parser.add_argument('--all', action='store_true')
     parser.add_argument('ids', type=int, nargs='*', default=[])
     args = parser.parse_args()
 
-    ids = args.ids or range(1, 501)
-    for problem_number in ids:
-        problem = locals().get('p{:03d}'.format(problem_number))
-        next_problem = locals().get('p{:03d}'.format(problem_number + 1))
-        if problem is not None and (next_problem is None or args.all or args.ids):
-            t0 = time.time()
-            answer = problem()
-            delta = time.time() - t0
-            if answer is not None and type(answer) != int:
-                print('result {} is instance {}, expected int'.format(problem_number, type(answer)))
-            print('problem {:3d}: {} ({:.02f} s)'.format(problem_number, answer, delta))
+    # collect all implemented problems
+    all_problems = {}
+    for problem_number in range(500):
+        try:
+            problem = getattr(sys.modules[__name__], 'p{:03d}'.format(problem_number))
+        except AttributeError:
+            # not implemented yet
+            pass
+        else:
+            all_problems[problem_number] = problem
 
-# TODO: cleanup this __main__ part, scrape all avail problem names
-#       can time a function call in 1-line ?
+    # by default, just run the highest problem number
+    problems = {max(all_problems): all_problems[max(all_problems)]}
 
+    if args.ids:
+        problems = {k: all_problems[k] for k in args.ids}
+    if args.all:
+        problems = all_problems
 
+    total_time = 0
+    for problem_number, problem in sorted(problems.items()):
+        delta, answer = my_timeit(problem)
+        total_time += delta
+        if answer is not None and type(answer) != int:
+            print('result {} is instance {}, expected int'.format(problem_number, type(answer)))
+        print(' problem {:3d}: {:16d} ({:.02f} s)'.format(problem_number, answer, delta))
+
+    if len(problems) > 1:
+        print('-'*40)
+        print(' total time : {:.02f} s'.format(total_time))
