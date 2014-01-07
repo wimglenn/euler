@@ -7,6 +7,7 @@ http://projecteuler.net/
 
 import os
 import ast
+import sys
 import math
 import time
 import string
@@ -19,6 +20,10 @@ import argparse as ap
 from functools import reduce
 
 #--- util ---------------------------------------------------------------------
+
+
+if sys.version_info.major == 2:
+    range = xrange
 
 
 def squares():
@@ -1311,7 +1316,7 @@ if __name__ == '__main__' and 1:
         if problem is not None and (next_problem is None or args.all or args.ids):
             t0 = time.time()
             answer = problem()
-            dt = time.time() - t0
+            delta = time.time() - t0
             if answer is not None and type(answer) != int:
                 print('result {} is instance {}, expected int'.format(problem_number, type(answer)))
-            print('problem {:3d}: {} ({:.02f} s)'.format(problem_number, answer, dt))
+            print('problem {:3d}: {} ({:.02f} s)'.format(problem_number, answer, delta))
