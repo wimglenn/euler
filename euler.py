@@ -1333,7 +1333,7 @@ def p053():
     It is not until n = 23, that a value exceeds one-million: 23C10 = 1144066.
 
     How many, not necessarily distinct, values of  nCr, for 1 ≤ n ≤ 100, are greater than one-million?"""
-    return sum(1 for n in xrange(1, 101) for r in xrange(1, n) if nCr(n, r) > 1000000)
+    return sum(1 for n in range(1, 101) for r in range(1, n) if nCr(n, r) > 1000000)
 
 
 if __name__ == '__main__' and 1:
