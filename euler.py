@@ -232,8 +232,6 @@ def factorise(n):
         result = factorise(-n)
         result[0] *= -1
         return result
-    if n == 1 or n == 2:
-        return [n]
     for i in range(2, int(1 + math.sqrt(n))):
         if n % i == 0:
             return [i] + factorise(n // i)
