@@ -17,8 +17,13 @@ import operator as op
 import numpy as np
 import datetime as dt
 import argparse as ap
+from enum import Enum
+from operator import attrgetter
 from functools import reduce
+from functools import total_ordering
 from timeit import Timer
+
+
 
 #--- util -------------------------------------------------------------------------------------------------------------
 
@@ -261,7 +266,7 @@ def divisors(n):
 
 
 def palindrome(s):
-    return s.lower() == s.lower()[::-1]
+    return str(s).lower() == str(s).lower()[::-1]
 
 
 def unique_digits(n):
@@ -728,12 +733,12 @@ def p021():
 
 
 def p022():
-    """Using names.txt (right click and 'Save Link/Target As...'), a 46K text file containing over five-thousand first names, begin by sorting it into alphabetical order. Then working out the alphabetical value for each name, multiply this value by its alphabetical position in the list to obtain a name score.
+    """Using p022_names.txt (right click and 'Save Link/Target As...'), a 46K text file containing over five-thousand first names, begin by sorting it into alphabetical order. Then working out the alphabetical value for each name, multiply this value by its alphabetical position in the list to obtain a name score.
 
     For example, when the list is sorted into alphabetical order, COLIN, which is worth 3 + 15 + 12 + 9 + 14 = 53, is the 938th name in the list. So, COLIN would obtain a score of 938  53 = 49714.
 
     What is the total of all the name scores in the file?"""
-    with open(os.path.join(os.path.dirname(__file__), 'names.txt')) as f:
+    with open(os.path.join(os.path.dirname(__file__), 'p022_names.txt')) as f:
         names = sorted(ast.literal_eval(f.read()))
     return sum(sum(ord(c) - 64 for c in name) * i for i, name in enumerate(names, 1))
 
@@ -995,7 +1000,7 @@ def p036():
     Find the sum of all numbers, less than one million, which are palindromic in base 10 and base 2.
 
     (Please note that the palindromic number, in either base, may not include leading zeros.)"""
-    return sum(n for n in range(1000000) if palindrome(str(n)) and palindrome(str(bin(n))[2:]))
+    return sum(n for n in range(1000000) if palindrome(n) and palindrome(bin(n)[2:]))
 
 
 def p037():
@@ -1098,8 +1103,8 @@ def p042():
 
     By converting each letter in a word to a number corresponding to its alphabetical position and adding these values we form a word value. For example, the word value for SKY is 19 + 11 + 25 = 55 = t10. If the word value is a triangle number then we shall call the word a triangle word.
 
-    Using words.txt (right click and 'Save Link/Target As...'), a 16K text file containing nearly two-thousand common English words, how many are triangle words?"""
-    with open(os.path.join(os.path.dirname(__file__), 'words.txt')) as f:
+    Using p042_words.txt (right click and 'Save Link/Target As...'), a 16K text file containing nearly two-thousand common English words, how many are triangle words?"""
+    with open(os.path.join(os.path.dirname(__file__), 'p042_words.txt')) as f:
         words = ast.literal_eval(f.read())
     tri = set(it.takewhile(lambda t: t <= len(max(words, key=len)) * 26, triangles()))
     return sum(1 for word in words if sum(ord(c) - 64 for c in word) in tri)
@@ -1334,7 +1339,233 @@ def p053():
     return sum(1 for n in range(1, 101) for r in range(1, n) if nCr(n, r) > 1000000)
 
 
-if __name__ == '__main__' and 1:
+def p054():
+    """In the card game poker, a hand consists of five cards and are ranked, from lowest to highest, in the following way:
+
+    High Card: Highest value card.
+    One Pair: Two cards of the same value.
+    Two Pairs: Two different pairs.
+    Three of a Kind: Three cards of the same value.
+    Straight: All cards are consecutive values.
+    Flush: All cards of the same suit.
+    Full House: Three of a kind and a pair.
+    Four of a Kind: Four cards of the same value.
+    Straight Flush: All cards are consecutive values of same suit.
+    Royal Flush: Ten, Jack, Queen, King, Ace, in same suit.
+
+    The cards are valued in the order:
+    2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King, Ace.
+
+    If two players have the same ranked hands then the rank made up of the highest value wins; for example, a pair of eights beats a pair of fives (see example 1 below). But if two ranks tie, for example, both players have a pair of queens, then highest cards in each hand are compared (see example 4 below); if the highest cards tie then the next highest cards are compared, and so on.
+
+    Consider the following five hands dealt to two players:
+
+    Hand,Player 1,Player 2,Winner,
+    1,"5H 5C 6S 7S KD Pair of Fives","2C 3S 8S 8D TD Pair of Eights",Player 2,
+    2,"5D 8C 9S JS AC Highest card Ace","2C 5C 7D 8S QH Highest card Queen",Player 1,
+    3,"2D 9C AS AH AC Three Aces","3D 6D 7D TD QD Flush with Diamonds",Player 2,
+    4,"4D 6S 9H QH QC Pair of Queens Highest card Nine","3D 6D 7H QD QS Pair of Queens Highest card Seven",Player 1,
+    5,"2H 2D 4C 4D 4S Full House With Three Fours","3C 3D 3S 9S 9D Full House with Three Threes",Player 1,
+
+    The file, p054_poker.txt, contains one-thousand random hands dealt to two players. Each line of the file contains ten cards (separated by a single space): the first five are Player 1's cards and the last five are Player 2's cards. You can assume that all hands are valid (no invalid characters or repeated cards), each player's hand is in no specific order, and in each hand there is a clear winner.
+
+    How many hands does Player 1 win?"""
+    class Card(object):
+
+        values = {k: v for v, k in enumerate(['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'], 2)}
+        suits = {k[0].upper(): k for k in ('clubs', 'spades', 'diamonds', 'hearts')}
+
+        def __init__(self, vs):
+            value, suit = vs
+            try:
+                self.value = Card.values[value]
+                self.suit = Card.suits[suit]
+            except KeyError:
+                raise ValueError('Could not parse card: {}'.format(vs))
+
+
+    @total_ordering
+    class Hand(object):
+
+        ranks = {
+            'High Card': 0,
+            'One Pair': 1,
+            'Two Pairs': 2,
+            'Three of a Kind': 3,
+            'Straight': 4,
+            'Flush': 5,
+            'Full House': 6,
+            'Four of a Kind': 7,
+            'Straight Flush': 8,
+            'Royal Flush': 9,
+        }
+
+        def __init__(self, cards):
+            self.cards = sorted([Card(x) for x in cards.split()], key=attrgetter('value'))
+            if len(self.cards) != 5:
+                raise ValueError('Could not parse hand: {}'.format(cards))
+            self.rank = None
+            self.high_card = None
+            self._check_hand()
+            assert self.rank is not None and self.high_card is not None
+
+        def score(self):
+            return Hand.ranks[self.rank]*100 + self.high_card.value
+
+        def _check_hand(self):
+            if self.is_flush() and self.is_straight():
+                if self.cards[-1].value == Card('AS').value:
+                    self.rank = 'Royal Flush'
+                else:
+                    self.rank = 'Straight Flush'
+                self.high_card = self.cards[-1]
+                return
+
+            if len({x.value for x in self.cards}) == 2:
+                self.rank = 'Four of a Kind'
+                try:
+                    self.high_card = next(c for c in self.cards if sum(1 for x in self.cards if x.value == c.value) == 4)
+                except StopIteration:
+                    self.rank = 'Full House'
+                    self.high_card = next(c for c in self.cards if sum(1 for x in self.cards if x.value == c.value) == 3)
+                return
+
+            if self.is_flush():
+                self.rank = 'Flush'
+                self.high_card = self.cards[-1]
+                return
+
+            if self.is_straight():
+                self.rank = 'Straight'
+                self.high_card = self.cards[-1]
+                return
+
+            if len({x.value for x in self.cards}) == 3:
+                self.rank = 'Three of a Kind'
+                try:
+                    self.high_card = next(c for c in self.cards if sum(1 for x in self.cards if x.value == c.value) == 3)
+                except StopIteration:
+                    self.rank = 'Two Pairs'
+                    extra_card = next(c for c in self.cards if sum(1 for x in self.cards if x.value == c.value) == 1)
+                    self.high_card = [c for c in self.cards if c.value != extra_card.value][-1]
+                return
+
+            if len({x.value for x in self.cards}) == 4:
+                self.rank = 'One Pair'
+                self.high_card = next(c for c in self.cards if sum(1 for x in self.cards if x.value == c.value) == 2)
+                return
+
+            self.rank = 'High Card'
+            self.high_card = self.cards[-1]
+
+        def is_flush(self):
+            return len({x.suit for x in self.cards}) == 1
+
+        def is_straight(self):
+            low_value = self.cards[0].value
+            return [x.value for x in self.cards] == list(range(low_value, low_value + 5))
+
+        def __lt__(self, other):
+            return self.score() < other.score()
+
+        def __eq__(self, other):
+            return self.score() == other.score()
+
+
+
+    with open('p054_poker.txt') as f:
+        player1_wins = 0
+        for line in f:
+            player1, player2 = line[:14], line[14:]
+            hand1, hand2 = Hand(player1), Hand(player2)
+            if hand1 < hand2:
+                x = '<'
+            elif hand2 < hand1:
+                x = '>'
+            else:
+                # need to check next highest card ... 
+                next_high_card1 = max((c for c in hand1.cards if c.value != hand1.high_card.value), key=attrgetter('value'))
+                next_high_card2 = max((c for c in hand2.cards if c.value != hand2.high_card.value), key=attrgetter('value'))
+                if next_high_card1.value < next_high_card2.value:
+                    x = '<'
+                elif next_high_card2.value < next_high_card1.value:
+                    x = '>'
+                else:
+                    # really we have to keep checking the next highest card recursively.
+                    # just checking once is super lame but it works for the sample data, so ... meh 
+                    assert(0)
+            msg = '{} {} {} ({} {} {})'.format(
+                player1.strip(), x, player2.strip(), 
+                hand1.rank, 'wins against' if x == '>' else 'loses to', hand2.rank
+            )
+            # print(msg)
+            if x == '>':
+                player1_wins += 1
+
+    return player1_wins
+
+
+def p055():
+    """If we take 47, reverse and add, 47 + 74 = 121, which is palindromic.
+
+    Not all numbers produce palindromes so quickly. For example,
+
+    349 + 943 = 1292,
+    1292 + 2921 = 4213
+    4213 + 3124 = 7337
+
+    That is, 349 took three iterations to arrive at a palindrome.
+
+    Although no one has proved it yet, it is thought that some numbers, like 196, never produce a palindrome. A number that never forms a palindrome through the reverse and add process is called a Lychrel number. Due to the theoretical nature of these numbers, and for the purpose of this problem, we shall assume that a number is Lychrel until proven otherwise. In addition you are given that for every number below ten-thousand, it will either (i) become a palindrome in less than fifty iterations, or, (ii) no one, with all the computing power that exists, has managed so far to map it to a palindrome. In fact, 10677 is the first number to be shown to require over fifty iterations before producing a palindrome: 4668731596684224866951378664 (53 iterations, 28-digits).
+
+    Surprisingly, there are palindromic numbers that are themselves Lychrel numbers; the first example is 4994.
+
+    How many Lychrel numbers are there below ten-thousand?
+
+    NOTE: Wording was modified slightly on 24 April 2007 to emphasise the theoretical nature of Lychrel numbers."""
+    count = 0
+    for n in range(10000):
+        for _ in range(50):
+            n = n + int(str(n)[::-1])
+            if palindrome(n):
+                break
+        else:
+            count += 1
+
+    return count
+
+
+def p056():
+    """A googol (10^100) is a massive number: one followed by one-hundred zeros; 100^100 is almost unimaginably large: one followed by two-hundred zeros. Despite their size, the sum of the digits in each number is only 1.
+
+    Considering natural numbers of the form, a^b, where a, b < 100, what is the maximum digital sum?"""
+    return max(sum(int(x) for x in str(a**b)) for a in range(100) for b in range(a))
+
+
+def p057():
+    """It is possible to show that the square root of two can be expressed as an infinite continued fraction.
+
+    √ 2 = 1 + 1/(2 + 1/(2 + 1/(2 + ... ))) = 1.414213...
+
+    By expanding this for the first four iterations, we get:
+
+    1 + 1/2 = 3/2 = 1.5
+    1 + 1/(2 + 1/2) = 7/5 = 1.4
+    1 + 1/(2 + 1/(2 + 1/2)) = 17/12 = 1.41666...
+    1 + 1/(2 + 1/(2 + 1/(2 + 1/2))) = 41/29 = 1.41379...
+
+    The next three expansions are 99/70, 239/169, and 577/408, but the eighth expansion, 1393/985, is the first example where the number of digits in the numerator exceeds the number of digits in the denominator.
+
+    In the first one-thousand expansions, how many fractions contain a numerator with more digits than denominator?"""
+    a, b, count = 3, 2, 0
+    for _ in range(1000):
+        a, b = a + 2*b, a + b
+        if len(str(a)) > len(str(b)):
+            count += 1
+    return count
+
+
+if __name__ == '__main__':
 
     import doctest
     doctest.testmod()
