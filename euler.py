@@ -178,12 +178,12 @@ def primes(n):
     1480"""
     if n <= 2:
         return []
-    r = [True for x in range(n)]
+    r = [True] * n
     r[0] = r[1] = False
     r[4::2] = [False] * len(r[4::2])
     for i, x in enumerate(r[:int(1 + math.sqrt(n))]):
         if x:
-            r[3 * i::2 * i] = [False] * len(r[3 * i::2 * i])
+            r[3*i::2*i] = [False] * len(r[3*i::2*i])
     return [i for i, x in enumerate(r) if x]
 
 
