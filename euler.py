@@ -181,8 +181,8 @@ def primes(n):
     r = [True] * n
     r[0] = r[1] = False
     r[4::2] = [False] * len(r[4::2])
-    for i, x in enumerate(r[:int(1 + math.sqrt(n))]):
-        if x:
+    for i in range(int(1 + math.sqrt(n))):
+        if r[i]:
             r[3*i::2*i] = [False] * len(r[3*i::2*i])
     return [i for i, x in enumerate(r) if x]
 
