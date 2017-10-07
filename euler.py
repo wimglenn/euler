@@ -24,7 +24,6 @@ from functools import total_ordering
 from timeit import Timer
 
 
-
 #--- util -------------------------------------------------------------------------------------------------------------
 
 if sys.version_info.major == 2:
@@ -283,7 +282,7 @@ def unique_digits(n):
 
 def nCr(n, r, memo={}):
     if (n, r) not in memo:
-        memo[n, r] = memo[n, n-r] = math.factorial(n) / (math.factorial(r) * math.factorial(n-r))
+        memo[n, r] = memo[n, n-r] = math.factorial(n) // (math.factorial(r) * math.factorial(n-r))
     return memo[n, r]
 
 
