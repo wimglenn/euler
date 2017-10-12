@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
-# coding: utf-8
-
 """
 http://projecteuler.net/
 """
-# pylint: disable=line-too-long,superfluous-parens,invalid-name
-
 import os
 import ast
 import sys
@@ -17,17 +13,10 @@ import operator as op
 import numpy as np
 import datetime as dt
 import argparse as ap
-from enum import Enum
 from operator import attrgetter
 from functools import reduce
 from functools import total_ordering
 from timeit import Timer
-
-
-#--- util -------------------------------------------------------------------------------------------------------------
-
-if sys.version_info.major == 2:
-    range = xrange
 
 
 def my_timeit(func, *args, **kwargs):
@@ -286,7 +275,7 @@ def nCr(n, r, memo={}):
     return memo[n, r]
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
 
 
 def p001():
@@ -1576,7 +1565,7 @@ if __name__ == '__main__':
 
     # collect all implemented problems
     all_problems = {}
-    for problem_number in range(500):
+    for problem_number in range(1000):
         try:
             problem = getattr(sys.modules[__name__], 'p{:03d}'.format(problem_number))
         except AttributeError:
