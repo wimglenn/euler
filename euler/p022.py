@@ -8,5 +8,5 @@ What is the total of all the name scores in the file?
 from ast import literal_eval
 from pathlib import Path
 
-names = sorted(literal_eval(Path('p022_names.txt').read_text()))
+names = sorted(literal_eval(Path('data/p022_names.txt').read_text()))
 result = sum(sum(ord(c) - 64 for c in name) * i for i, name in enumerate(names, 1))

@@ -138,7 +138,7 @@ class Hand(object):
 
 
 player1_wins = 0
-for line in Path('p054_poker.txt').read_text().splitlines():
+for line in Path('data/p054_poker.txt').read_text().splitlines():
     player1, player2 = line[:14], line[14:]
     hand1, hand2 = Hand(player1), Hand(player2)
     if hand1 < hand2:
