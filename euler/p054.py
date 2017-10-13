@@ -35,7 +35,7 @@ from operator import attrgetter
 from pathlib import Path
 
 
-class Card(object):
+class Card:
 
     values = {k: v for v, k in enumerate(['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'], 2)}
     suits = {k[0].upper(): k for k in ('clubs', 'spades', 'diamonds', 'hearts')}
@@ -50,7 +50,7 @@ class Card(object):
 
 
 @total_ordering
-class Hand(object):
+class Hand:
 
     ranks = {
         'High Card': 0,

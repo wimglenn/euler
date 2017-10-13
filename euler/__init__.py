@@ -167,7 +167,7 @@ def primes(n):
     return [i for i, x in enumerate(r) if x]
 
 
-class SetOfThings(object):
+class SetOfThings:
 
     """A set-like abstraction which hides a callable deterministic test"""
 
