@@ -13,5 +13,5 @@ from pathlib import Path
 from euler import triangles
 
 words = literal_eval(Path('data/p042_words.txt').read_text())
-tri = set(takewhile(lambda t: t <= len(max(words, key=len)) * 26, triangles()))
-result = sum(1 for word in words if sum(ord(c) - 64 for c in word) in tri)
+tri = set(takewhile((len(max(words, key=len))*26).__gt__, triangles()))
+result = sum(1 for word in words if sum(ord(c)-64 for c in word) in tri)
