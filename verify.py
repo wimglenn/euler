@@ -3,7 +3,7 @@ import json
 import time
 import euler
 
-with open('./euler/my_answers.json') as f:
+with open('./data/my_answers.json') as f:
     d = json.load(f)
 
 t0 = time.time()
