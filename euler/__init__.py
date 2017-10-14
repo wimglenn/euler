@@ -2,12 +2,15 @@
 """
 http://projecteuler.net/
 """
-import sys
+import json
 import math
+import sys
 import itertools as it
 import operator as op
-import argparse as ap
+from argparse import ArgumentParser
 from functools import reduce
+from importlib import import_module
+from pathlib import Path
 from timeit import Timer
 
 
@@ -267,43 +270,40 @@ def nCr(n, r, memo={}):
     return memo[n, r]
 
 
+def get_result(modname):
+    module = import_module(f'euler.{modname}')
+    return getattr(module, 'result', None)
+
+
 if __name__ == '__main__':
 
     import doctest
     doctest.testmod()
 
-    parser = ap.ArgumentParser("Wim's project euler progress")
+    parser = ArgumentParser("Wim's project euler progress")
     parser.add_argument('--all', action='store_true')
     parser.add_argument('ids', type=int, nargs='*', default=[])
     args = parser.parse_args()
 
-    # collect all implemented problems
-    all_problems = {}
-    for problem_number in range(1000):
-        try:
-            problem = getattr(sys.modules[__name__], 'p{:03d}'.format(problem_number))
-        except AttributeError:
-            # not implemented yet
-            pass
-        else:
-            all_problems[problem_number] = problem
-
-    # by default, just run the highest problem number
-    problems = {max(all_problems): all_problems[max(all_problems)]}
-
+    here = Path(__file__).parent
+    sys.path.append(str(here.parent))
+    my_answers = json.loads((here/'../data/my_answers.json').read_text())
     if args.ids:
-        problems = {k: all_problems[k] for k in args.ids}
-    if args.all:
-        problems = all_problems
+        problems = [f'p{n:03d}' for n in args.ids]
+    else:
+        problems = [p.name[:-3] for p in here.glob('p*.py')]
+        if not args.all:
+            problems = [max(problems)]
 
     total_time = 0
-    for problem_number, problem in sorted(problems.items()):
-        delta, answer = my_timeit(problem)
+    for p in sorted(problems):
+        delta, answer = my_timeit(get_result, p)
         total_time += delta
-        if answer is not None and type(answer) != int:
-            print('result {} is instance {}, expected int'.format(problem_number, type(answer)))
-        print(' problem {:3d}: {:16d} ({:.02f} s)'.format(problem_number, answer, delta))
+        if answer is not None and type(answer) is not int:
+            print(f'{p} result is instance {type(answer)}, expected int')
+        print(f' {p}: {answer:16d} ({delta:.02f}s)')
+        assert answer == my_answers[p]
 
     if len(problems) > 1:
         print('-' * 40)
-        print(' total time : {:.02f} s'.format(total_time))
+        print(f' total time : {total_time:.02f} s')
