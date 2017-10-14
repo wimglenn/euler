@@ -14,18 +14,6 @@ from pathlib import Path
 from timeit import Timer
 
 
-def my_timeit(func, *args, **kwargs):
-    """Uses timeit to wrap a function and return execution time along with the result"""
-    output_container = []
-
-    def wrapper():
-        output_container.append(func(*args, **kwargs))
-
-    timer = Timer(wrapper)
-    delta = timer.timeit(1)
-    return delta, output_container.pop()
-
-
 def squares():
     """generator yielding 1, 4, 9, 16..."""
     return (n * n for n in it.count(1))
@@ -273,6 +261,13 @@ def nCr(n, r, memo={}):
 def get_result(modname):
     module = import_module(f'euler.{modname}')
     return getattr(module, 'result', None)
+
+
+def my_timeit(func, *args, **kwargs):
+    """Return execution time along with the result"""
+    def wrapper():
+        wrapper.result = func(*args, **kwargs)
+    return Timer(wrapper).timeit(1), wrapper.result
 
 
 if __name__ == '__main__':
