@@ -297,7 +297,7 @@ if __name__ == '__main__':
         if answer is not None and type(answer) is not int:
             print(f'{p} result is instance {type(answer)}, expected int')
         print(f' {p}: {answer:16d} ({delta:.02f}s)')
-        assert answer == my_answers[p]
+        assert answer == my_answers.get(p, answer)
 
     if len(problems) > 1:
         print('-' * 40)
